@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Project Sandbox — Wild Veracruz</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ocean: #0a4a6e;
+    --teal: #1a7a8a;
+    --sand: #e8d5b0;
+    --coral: #e07050;
+    --foam: #f0ede6;
+    --deep: #051d2e;
+    --leaf: #3a7a50;
+    --gold: #c8962a;
+    --text: #1a1a1a;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--foam); color: var(--text); overflow-x: hidden; }
+
+  .hero {
+    min-height: 100vh;
+    background: var(--deep);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    position: relative; overflow: hidden; text-align: center; padding: 2rem;
+  }
+  .hero::before {
+    content: ''; position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 80% 60% at 50% 120%, rgba(26,122,138,0.45) 0%, transparent 70%),
+      radial-gradient(ellipse 60% 40% at 20% 80%, rgba(10,74,110,0.5) 0%, transparent 60%),
+      radial-gradient(ellipse 40% 30% at 80% 20%, rgba(224,112,80,0.15) 0%, transparent 50%);
+  }
+  .badge {
+    font-size: 0.7rem; font-weight: 500; letter-spacing: 0.25em; text-transform: uppercase;
+    color: var(--coral); border: 1px solid rgba(224,112,80,0.4);
+    padding: 0.4em 1.2em; border-radius: 99px; margin-bottom: 2rem;
+    position: relative; animation: fadeUp 0.8s ease both;
+  }
+  .hero h1 {
+    font-family: 'Playfair Display', serif; font-size: clamp(2.8rem, 8vw, 7rem);
+    font-weight: 900; color: var(--sand); line-height: 1;
+    position: relative; animation: fadeUp 0.9s 0.1s ease both;
+  }
+  .hero h1 em { font-style: italic; color: var(--teal); }
+  .hero-sub {
+    font-size: clamp(1rem, 2vw, 1.25rem); color: rgba(232,213,176,0.7);
+    max-width: 600px; margin-top: 1.5rem; line-height: 1.7;
+    position: relative; animation: fadeUp 1s 0.2s ease both;
+  }
+  .hero-location {
+    margin-top: 2rem; font-size: 0.85rem; letter-spacing: 0.15em;
+    text-transform: uppercase; color: rgba(232,213,176,0.4);
+    position: relative; animation: fadeUp 1s 0.3s ease both;
+  }
+  .scroll-hint {
+    position: absolute; bottom: 2.5rem; left: 50%; transform: translateX(-50%);
+    display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
+    color: rgba(232,213,176,0.3); font-size: 0.7rem; letter-spacing: 0.15em;
+    text-transform: uppercase; animation: fadeUp 1s 0.5s ease both;
+  }
+  .scroll-line {
+    width: 1px; height: 50px;
+    background: linear-gradient(to bottom, rgba(232,213,176,0.3), transparent);
+    animation: scrollPulse 2s infinite;
+  }
+
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(5,29,46,0.95); backdrop-filter: blur(12px);
+    padding: 1rem 2rem; display: flex; gap: 1.5rem; justify-content: center;
+    flex-wrap: wrap; border-bottom: 1px solid rgba(26,122,138,0.2);
+  }
+  nav a {
+    color: rgba(232,213,176,0.6); text-decoration: none; font-size: 0.8rem;
+    letter-spacing: 0.12em; text-transform: uppercase; font-weight: 500;
+    transition: color 0.2s; padding: 0.3em 0; border-bottom: 1px solid transparent;
+  }
+  nav a:hover { color: var(--sand); border-bottom-color: var(--coral); }
+
+  .intro { max-width: 760px; margin: 5rem auto; padding: 0 2rem; text-align: center; }
+  .intro p { font-size: 1.2rem; line-height: 1.8; color: #444; font-weight: 300; }
+  .intro p strong { color: var(--ocean); font-weight: 500; }
+
+  .animal-section { padding: 5rem 2rem; position: relative; }
+  .animal-section:nth-child(even) { background: var(--deep); color: var(--sand); }
+  .animal-section:nth-child(even) .section-label { color: var(--coral); }
+  .animal-section:nth-child(even) .animal-name { color: var(--sand); }
+  .animal-section:nth-child(even) .animal-desc { color: rgba(232,213,176,0.75); }
+  .animal-section:nth-child(even) p { color: rgba(232,213,176,0.75); }
+  .animal-section:nth-child(even) .facts-grid .fact { background: rgba(255,255,255,0.05); border-color: rgba(26,122,138,0.3); }
+  .animal-section:nth-child(even) .fact-title { color: #7dd3e0; }
+  .animal-section:nth-child(even) .fact p { color: rgba(232,213,176,0.7) !important; }
+  .animal-section:nth-child(even) .risk-box { background: rgba(224,112,80,0.12); border-color: rgba(224,112,80,0.3); }
+  .animal-section:nth-child(even) .risk-box p { color: rgba(232,213,176,0.8); }
+  .animal-section:nth-child(even) .habitat-tag { background: rgba(26,122,138,0.2); color: #7dd3e0; border-color: rgba(26,122,138,0.4); }
+  .animal-section:nth-child(even) .student-note { color: #7dcea0; background: rgba(58,122,80,0.15); border-color: rgba(58,122,80,0.35); }
+
+  .animal-inner { max-width: 1100px; margin: 0 auto; }
+  .animal-header { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: start; margin-bottom: 3rem; }
+  @media (max-width: 768px) { .animal-header { grid-template-columns: 1fr; gap: 2rem; } }
+
+  .animal-number {
+    font-family: 'Playfair Display', serif; font-size: 8rem; font-weight: 900;
+    line-height: 1; opacity: 0.06; position: absolute; top: 3rem; left: 2rem; pointer-events: none;
+  }
+  .section-label { font-size: 0.7rem; font-weight: 500; letter-spacing: 0.25em; text-transform: uppercase; color: var(--teal); margin-bottom: 0.5rem; }
+  .animal-name { font-family: 'Playfair Display', serif; font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 900; line-height: 1.1; margin-bottom: 0.3rem; color: var(--deep); }
+  .animal-sci { font-style: italic; font-size: 0.9rem; opacity: 0.5; margin-bottom: 1.5rem; }
+  .animal-desc { font-size: 1rem; line-height: 1.8; font-weight: 300; color: #444; }
+
+  .animal-photo-wrap { border-radius: 20px; overflow: hidden; position: relative; background: rgba(26,122,138,0.08); border: 1px solid rgba(26,122,138,0.15); aspect-ratio: 4/3; }
+  .animal-photo-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.4s ease; }
+  .animal-photo-wrap:hover img { transform: scale(1.04); }
+  .photo-credit { position: absolute; bottom: 0.5rem; right: 0.75rem; font-size: 0.65rem; color: rgba(255,255,255,0.7); background: rgba(0,0,0,0.5); padding: 0.2em 0.5em; border-radius: 4px; }
+
+  .habitat-tag { display: inline-block; background: rgba(26,122,138,0.12); border: 1px solid rgba(26,122,138,0.25); color: var(--teal); font-size: 0.72rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; padding: 0.3em 0.9em; border-radius: 99px; margin-bottom: 1rem; }
+  .student-note { display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.72rem; font-weight: 500; color: var(--leaf); background: rgba(58,122,80,0.1); border: 1px solid rgba(58,122,80,0.25); padding: 0.3em 0.9em; border-radius: 99px; margin-bottom: 1rem; margin-left: 0.4rem; }
+
+  .risk-box { background: rgba(224,112,80,0.07); border: 1px solid rgba(224,112,80,0.2); border-left: 4px solid var(--coral); border-radius: 12px; padding: 1.5rem 2rem; margin: 2rem 0; }
+  .risk-title { font-size: 0.7rem; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase; color: var(--coral); margin-bottom: 0.75rem; }
+  .risk-box p { font-size: 0.95rem; line-height: 1.7; color: #555; }
+
+  .facts-title { font-size: 0.7rem; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); margin-bottom: 1rem; }
+  .facts-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+  @media (max-width: 640px) { .facts-grid { grid-template-columns: 1fr; } }
+  .fact { background: rgba(10,74,110,0.05); border: 1px solid rgba(10,74,110,0.1); border-radius: 12px; padding: 1.25rem; transition: transform 0.2s; }
+  .fact:hover { transform: translateY(-3px); }
+  .fact-num { font-family: 'Playfair Display', serif; font-size: 1.8rem; font-weight: 900; color: var(--gold); opacity: 0.6; line-height: 1; margin-bottom: 0.5rem; }
+  .fact-title { font-size: 0.8rem; font-weight: 500; letter-spacing: 0.05em; color: var(--teal); text-transform: uppercase; margin-bottom: 0.4rem; }
+  .fact p { font-size: 0.88rem; line-height: 1.6; color: #555 !important; }
+
+  .reflection { background: linear-gradient(135deg, var(--ocean) 0%, var(--teal) 50%, var(--leaf) 100%); padding: 6rem 2rem; text-align: center; color: white; position: relative; overflow: hidden; }
+  .reflection-inner { max-width: 800px; margin: 0 auto; position: relative; }
+  .reflection h2 { font-family: 'Playfair Display', serif; font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 700; margin-bottom: 2rem; line-height: 1.2; }
+  .reflection h2 em { font-style: italic; opacity: 0.7; }
+  .reflection p { font-size: 1.1rem; line-height: 1.8; color: rgba(255,255,255,0.85); margin-bottom: 1.5rem; font-weight: 300; }
+  .actions-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-top: 3rem; text-align: left; }
+  .action-card { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); border-radius: 16px; padding: 1.5rem; transition: background 0.2s; }
+  .action-card:hover { background: rgba(255,255,255,0.14); }
+  .action-icon { font-size: 1.8rem; margin-bottom: 0.75rem; }
+  .action-card h4 { font-size: 0.9rem; font-weight: 500; margin-bottom: 0.4rem; }
+  .action-card p { font-size: 0.82rem; color: rgba(255,255,255,0.65); line-height: 1.6; }
+
+  .sources { background: #f7f4ee; padding: 4rem 2rem; border-top: 1px solid rgba(10,74,110,0.1); }
+  .sources-inner { max-width: 980px; margin: 0 auto; }
+  .sources h2 { font-family: 'Playfair Display', serif; font-size: 2rem; color: var(--ocean); margin-bottom: 0.4rem; }
+  .sources-intro { font-size: 0.9rem; color: #777; margin-bottom: 2.5rem; line-height: 1.6; }
+  .sources-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; }
+  .source-group h3 { font-size: 0.7rem; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: var(--teal); margin-bottom: 0.75rem; padding-bottom: 0.5rem; border-bottom: 1px solid rgba(26,122,138,0.2); }
+  .source-group ul { list-style: none; }
+  .source-group li { font-size: 0.82rem; color: #555; line-height: 1.6; padding: 0.3rem 0 0.3rem 1rem; position: relative; }
+  .source-group li::before { content: '—'; position: absolute; left: 0; color: var(--coral); }
+  .source-group a { color: var(--ocean); text-decoration: none; font-weight: 500; border-bottom: 1px dotted rgba(10,74,110,0.3); }
+  .source-group a:hover { border-bottom-color: var(--ocean); }
+
+  footer { background: var(--deep); color: rgba(232,213,176,0.4); text-align: center; padding: 2.5rem 2rem; font-size: 0.8rem; letter-spacing: 0.05em; line-height: 2; }
+  footer strong { color: var(--sand); }
+
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes scrollPulse { 0%, 100% { opacity: 0.3; } 50% { opacity: 0.8; } }
+</style>
+</head>
+<body>
+
+<section class="hero">
+  <div class="badge">Project Sandbox — Wildlife Awareness Campaign</div>
+  <h1>Wild <em>Veracruz</em></h1>
+  <p class="hero-sub">Five remarkable wild species share the urban coastline of Veracruz–Boca del Río with us. It's time we truly see them.</p>
+  <p class="hero-location">📍 Zona Conurbada Veracruz · Boca del Río · Mexico</p>
+  <div class="scroll-hint"><div class="scroll-line"></div>scroll</div>
+</section>
+
+<nav>
+  <a href="#manatee">Manatee</a>
+  <a href="#coral">Coral</a>
+  <a href="#opossum">Opossum</a>
+  <a href="#turtle">Sea Turtle</a>
+  <a href="#crab">Blue Land Crab</a>
+  <a href="#reflection">Our Reflection</a>
+  <a href="#sources">Sources</a>
+</nav>
+
+<div class="intro">
+  <p>The metropolitan area of <strong>Veracruz–Boca del Río</strong> is one of Mexico's most ecologically rich urban zones. Bordered by the Gulf of Mexico, crisscrossed by rivers and lagoons, and neighbored by protected reefs, it shelters an astonishing diversity of wildlife — most of it invisible to the daily passerby. These five species live among us. Each one is struggling.</p>
+</div>
+
+<!-- 1. MANATEE -->
+<section class="animal-section" id="manatee">
+  <div class="animal-number">01</div>
+  <div class="animal-inner">
+    <div class="animal-header">
+      <div>
+        <p class="section-label">Species 01 · Aquatic Mammal</p>
+        <h2 class="animal-name">West Indian Manatee</h2>
+        <p class="animal-sci">Trichechus manatus</p>
+        <span class="habitat-tag">🌊 Coastal lagoons & river mouths</span>
+        <p class="animal-desc">The manatee is one of the Gulf of Mexico's most iconic gentle giants. In the Veracruz region, manatees inhabit the calm, warm, shallow waters of lagoons like <strong>Laguna de Tamiahua</strong> and the estuaries near Boca del Río. They feed on submerged aquatic vegetation and can stay underwater for up to 20 minutes. Listed as <strong>Vulnerable</strong> by the IUCN and protected under Mexico's NOM-059-SEMARNAT-2010, their populations have declined dramatically due to human activity along the Gulf coast.</p>
+      </div>
+      <div class="animal-photo-wrap">
+        <img
+          src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/FMIB_51654_Manatee.jpeg/800px-FMIB_51654_Manatee.jpeg"
+          alt="West Indian Manatee underwater"
+          onerror="this.onerror=null; this.src='https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/West_Indian_Manatee.jpg/800px-West_Indian_Manatee.jpg';"
+        >
+        <span class="photo-credit">© Wikimedia Commons / Public Domain</span>
+      </div>
+    </div>
+    <div class="risk-box">
+      <p class="risk-title">⚠ Threats in our region</p>
+      <p>Manatees in Veracruz face serious threats from <strong>boat propeller strikes</strong> — the leading cause of injury and death — as watercraft traffic in the lagoons has grown sharply. Pollution from urban runoff and industrial discharge degrades the seagrass beds they depend on. Entanglement in fishing nets and habitat loss from coastal development further reduce their numbers.</p>
+    </div>
+    <p class="facts-title">★ Fun Facts</p>
+    <div class="facts-grid">
+      <div class="fact">
+        <div class="fact-num">01</div>
+        <p class="fact-title">Elephant cousins</p>
+        <p>Despite living in water, manatees are most closely related to elephants. Their common ancestor roamed land some 60 million years ago — they even share similar toenails and thick skin.</p>
+      </div>
+      <div class="fact">
+        <div class="fact-num">02</div>
+        <p class="fact-title">Nonstop chewing</p>
+        <p>A manatee eats up to 10% of its body weight in seagrass every single day. They spend 6–8 hours grazing, earning them the nickname "sea cows."</p>
+      </div>
+      <div class="fact">
+        <div class="fact-num">03</div>
+        <p class="fact-title">Mermaids of legend</p>
+        <p>Sailors who spotted manatees for the first time reported seeing mermaids. Christopher Columbus himself wrote about them in his ship's log during his first voyage to the Americas.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 2. CORAL -->
+<section class="animal-section" id="coral">
+  <div class="animal-number">02</div>
+  <div class="animal-inner">
+    <div class="animal-header">
+      <div>
+        <p class="section-label">Species 02 · Reef Builder</p>
+        <h2 class="animal-name" style="display:inline">Elkhorn Coral</h2>
+        <span class="student-note">✏ Research by Andrew Bell</span>
+        <p class="animal-sci" style="margin-top:0.3rem">Acropora palmata</p>
+        <span class="habitat-tag">🐠 Parque Nacional Sistema Arrecifal Veracruzano</span>
+        <p class="animal-desc">The Elkhorn coral lives in the coral reefs of Veracruz, mainly within the <strong>Parque Nacional Sistema Arrecifal Veracruzano</strong>, where the ecosystem connects with nearby mangroves, coastal dunes, and even urban areas. On a local map of the Veracruz–Boca del Río zone, it would be found offshore in front of the port and hotel zone. Corals get most of their energy from symbiotic algae (zooxanthellae) that use sunlight to produce nutrients — and they also capture tiny zooplankton from surrounding water to supplement their diet.</p>
+      </div>
+      <div class="animal-photo-wrap">
+        <img
+          src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/54/Acropora_palmata%2C_elkhorn_coral.jpg/800px-Acropora_palmata%2C_elkhorn_coral.jpg"
+          alt="Acropora palmata Elkhorn coral"
+          onerror="this.onerror=null; this.src='https://upload.wikimedia.org/wikipedia/commons/thumb/3/38/Elkhorn_Coral_Acropora_palmata.jpg/800px-Elkhorn_Coral_Acropora_palmata.jpg';"
+        >
+        <span class="photo-credit">© NOAA / Wikimedia Commons</span>
+      </div>
+    </div>
+    <div class="risk-box">
+      <p class="risk-title">⚠ Threats in our region</p>
+      <p>In Veracruz, coral reefs face local urban dangers such as <strong>plastic pollution in the harbor, sewage and runoff from the city, sediment from construction</strong>, port activity, and boat traffic. Under Mexico's <strong>NOM-059-SEMARNAT-2010</strong>, <em>Acropora palmata</em> and <em>Acropora cervicornis</em> are listed under Special Protection. ⚠ Not-so-fun fact: almost all corals that look stunningly bright and shiny are actually bleaching under stress — a sign they may be dying if conditions do not improve.</p>
+    </div>
+    <p class="facts-title">★ Fun Facts</p>
+    <div class="facts-grid">
+      <div class="fact">
+        <div class="fact-num">01</div>
+        <p class="fact-title">Animals, not plants</p>
+        <p>Corals are animals. Each colony is made of hundreds of polyps — tiny creatures with mouths surrounded by tentacles that sting and capture microscopic prey to feed the colony.</p>
+      </div>
+      <div class="fact">
+        <div class="fact-num">02</div>
+        <p class="fact-title">Hard vs. soft</p>
+        <p>Hard corals have rigid calcium carbonate skeletons shaped like brains, staghorns, and fans. Soft corals lack a solid skeleton and move gently with the current, looking more like plants or shrubs.</p>
+      </div>
+      <div class="fact">
+        <div class="fact-num">03</div>
+        <p class="fact-title">Ocean's pharmacies</p>
+        <p>Coral reefs have yielded compounds used in treatments for cancer, arthritis, and HIV. Scientists estimate that reefs may hold the key to thousands of undiscovered medicines.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 3. OPOSSUM -->
+<section class="animal-section" id="opossum">
+  <div class="animal-number">03</div>
+  <div class="animal-inner">
+    <div class="animal-header">
+      <div>
+        <p class="section-label">Species 03 · Urban Wildlife</p>
+        <h2 class="animal-name" style="display:inline">Virginia Opossum</h2>
+        <span class="student-note">✏ Research by Project Sandbox</span>
+        <p class="animal-sci" style="margin-top:0.3rem">Didelphis virginiana · "Tlacuache"</p>
+        <span class="habitat-tag">🌳 Urban green spaces & stream banks</span>
+        <p class="animal-desc">The tlacuache is <strong>Mexico's only native marsupial</strong> — a cousin of kangaroos and koalas, carrying its babies in a small pouch on its belly. You have probably seen them running across a wall at night. They are nocturnal, peaceful, and solitary. In the Veracruz–Boca del Río metropolitan area, their natural habitats — mangroves, riparian corridors, and urban green spaces — are constantly shrinking as the city grows. Far from being pests, tlacuaches work quietly every night to control insects, rodents, and ticks in our ecosystem.</p>
+      </div>
+      <div class="animal-photo-wrap">
+        <img
+          src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Virginia_opossum_%28Didelphis_virginiana%29.jpg/800px-Virginia_opossum_%28Didelphis_virginiana%29.jpg"
+          alt="Virginia Opossum - Tlacuache"
+          onerror="this.onerror=null; this.src='https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/Opossum_2.jpg/800px-Opossum_2.jpg';"
+        >
+        <span class="photo-credit">© Wikimedia Commons</span>
+      </div>
+    </div>
+    <div class="risk-box">
+      <p class="risk-title">⚠ Threats in our region</p>
+      <p><strong>Urban growth</strong> in Veracruz and Boca del Río destroys their homes, forcing them further into the city. <strong>Traffic accidents</strong> are the #1 cause of death for adult tlacuaches — they are slow and have poor eyesight. <strong>Pet attacks</strong> from outdoor dogs and cats are a constant threat. Perhaps worst: <strong>human ignorance</strong> — many people mistake them for "giant rats" that carry diseases, leading them to be intentionally hurt or poisoned out of fear.</p>
+    </div>
+    <p class="facts-title">★ Fun Facts</p>
+    <div class="facts-grid">
+      <div class="fact">
+        <div class="fact-num">01</div>
+        <p class="fact-title">Nature's superheroes</p>
+        <p>Their low body temperature makes tlacuaches practically immune to rabies. They are also naturally immune to the venom of local snakes — like rattlesnakes — and will even eat them.</p>
+      </div>
+      <div class="fact">
+        <div class="fact-num">02</div>
+        <p class="fact-title">The hanging myth</p>
+        <p>Adult tlacuaches are too heavy to sleep hanging from their tails. They use their prehensile tails to grip branches — but only babies can truly hang from them, and only for a few seconds.</p>
+      </div>
+      <div class="fact">
+        <div class="fact-num">03</div>
+        <p class="fact-title">"Playing dead" is a coma</p>
+        <p>When terrified, they don't just act dead — extreme fear triggers a real involuntary coma called <em>thanatosis</em>. Their bodies stiffen and release a rotting smell to convince predators they are already dead.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 4. SEA TURTLE -->
+<section class="animal-section" id="turtle">
+  <div class="animal-number">04</div>
+  <div class="animal-inner">
+    <div class="animal-header">
+      <div>
+        <p class="section-label">Species 04 · Marine Reptile</p>
+        <h2 class="animal-name">Kemp's Ridley Sea Turtle</h2>
+        <p class="animal-sci">Lepidochelys kempii</p>
+        <span class="habitat-tag">🏖 Gulf beaches & offshore waters</span>
+        <p class="animal-desc">The Gulf of Mexico coast near Veracruz is a critical migratory corridor and nesting zone for the <strong>Kemp's Ridley</strong> — the world's most endangered sea turtle. Female turtles return to the same beaches where they were born to nest, sometimes traveling thousands of kilometers across the open ocean. Beaches near <strong>Antón Lizardo</strong> and the southern Veracruz coast serve as active nesting sites. These ancient reptiles have existed for over 100 million years — long before humans, long before this city.</p>
+      </div>
+      <div class="animal-photo-wrap">
+        <img
+          src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a3/Kemp%27s_Ridley_sea_turtle_Lepidochelys_kempii.jpg/800px-Kemp%27s_Ridley_sea_turtle_Lepidochelys_kempii.jpg"
+          alt="Kemp's Ridley sea turtle"
+          onerror="this.onerror=null; this.src='https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/Kemps_Ridley_sea_turtle.JPG/800px-Kemps_Ridley_sea_turtle.JPG';"
+        >
+        <span class="photo-credit">© NOAA / Wikimedia Commons</span>
+      </div>
+    </div>
+    <div class="risk-box">
+      <p class="risk-title">⚠ Threats in our region</p>
+      <p>Nesting beaches near Veracruz are increasingly compromised by <strong>light pollution from urban development</strong>, which disorients hatchlings that use moonlight to find the ocean. Beach recreation and unregulated tourism disturb nesting females. <strong>Bycatch in shrimp trawling nets</strong> kills thousands of sea turtles annually in Gulf waters. Plastic pollution and rising sea temperatures — which skew the gender of hatchlings — add further pressure. The Kemp's Ridley is listed as <strong>Critically Endangered</strong>.</p>
+    </div>
+    <p class="facts-title">★ Fun Facts</p>
+    <div class="facts-grid">
+      <div class="fact">
+        <div class="fact-num">01</div>
+        <p class="fact-title">Temperature = gender</p>
+        <p>Sea turtle gender is not determined by genetics, but by nest temperature. Warmer nests produce more females; cooler nests produce more males. Climate change is skewing this ratio dangerously.</p>
+      </div>
+      <div class="fact">
+        <div class="fact-num">02</div>
+        <p class="fact-title">Ancient navigators</p>
+        <p>Sea turtles use Earth's magnetic field as a GPS system. They can navigate thousands of kilometers of open ocean and return to the exact beach where they were born — sometimes 30 years later.</p>
+      </div>
+      <div class="fact">
+        <div class="fact-num">03</div>
+        <p class="fact-title">Crying salt</p>
+        <p>Sea turtles appear to cry on the beach. They are actually secreting excess salt through special glands near their eyes — a water-saving adaptation to life in the sea.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 5. BLUE LAND CRAB -->
+<section class="animal-section" id="crab">
+  <div class="animal-number">05</div>
+  <div class="animal-inner">
+    <div class="animal-header">
+      <div>
+        <p class="section-label">Species 05 · Crustacean</p>
+        <h2 class="animal-name">Blue Land Crab</h2>
+        <p class="animal-sci">Cardisoma guanhumi · "Cangrejo azul"</p>
+        <span class="habitat-tag">🌿 Mangroves, estuaries & coastal forest</span>
+        <p class="animal-desc">The blue land crab (<em>Cardisoma guanhumi</em>) — known locally as "cangrejo azul" — is a large terrestrial crab that lives in burrows in the humid coastal forests, mangrove edges, and estuaries of the Veracruz region. Unlike the sea-dwelling jaiba (<em>Callinectes sapidus</em>), this species spends most of its life on land, returning to the sea only to release its larvae. It is found in areas around <strong>Laguna de Mandinga</strong>, the Boca del Río coastline, and nearby mangrove systems. It is both a keystone species and a culturally significant animal in coastal Veracruz communities.</p>
+      </div>
+      <div class="animal-photo-wrap">
+        <img
+          src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6d/Cardisoma_guanhumi_2.jpg/800px-Cardisoma_guanhumi_2.jpg"
+          alt="Cardisoma guanhumi blue land crab"
+          onerror="this.onerror=null; this.src='https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/Cardisoma_guanhumi.jpg/800px-Cardisoma_guanhumi.jpg';"
+        >
+        <span class="photo-credit">© Wikimedia Commons</span>
+      </div>
+    </div>
+    <div class="risk-box">
+      <p class="risk-title">⚠ Threats in our region</p>
+      <p><strong>Overharvesting</strong> is the most immediate threat — blue land crabs are collected for food before reaching reproductive maturity, destabilizing local populations. The destruction of <strong>mangrove forests and coastal vegetation</strong> — their primary habitat — has accelerated as the urban area expands. <strong>Pollution from urban and agricultural runoff</strong> contaminates the burrow zones where they live, and they are highly vulnerable to <strong>pesticides</strong> used in nearby fields and gardens.</p>
+    </div>
+    <p class="facts-title">★ Fun Facts</p>
+    <div class="facts-grid">
+      <div class="fact">
+        <div class="fact-num">01</div>
+        <p class="fact-title">Land dweller, sea breeder</p>
+        <p>Despite living on land, female blue land crabs must travel to the ocean to release their eggs into the sea. The larvae develop in saltwater before the juveniles return to land to burrow.</p>
+      </div>
+      <div class="fact">
+        <div class="fact-num">02</div>
+        <p class="fact-title">Growth by molting</p>
+        <p>To grow, blue land crabs must shed their entire hard shell. For several hours after molting they are completely soft and defenseless, hiding deep in their burrows to survive this vulnerable moment.</p>
+      </div>
+      <div class="fact">
+        <div class="fact-num">03</div>
+        <p class="fact-title">Ecosystem engineers</p>
+        <p>Their digging aerates the soil and improves drainage in coastal forests. They also consume leaf litter and organic matter, acting as natural recyclers in the mangrove ecosystem.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- REFLECTION -->
+<section class="reflection" id="reflection">
+  <div class="reflection-inner">
+    <p style="color: rgba(255,255,255,0.5); font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 1rem;">Our Responsibility</p>
+    <h2>We don't have to <em>choose</em> between the city and the wild.</h2>
+    <p>The manatee in the lagoon, the coral off the port, the tlacuache in your backyard, the turtle on the beach, the blue land crab in the mangrove — none of them migrated to our territory. We built our city into theirs. The question was never whether humans and wildlife can coexist. The question is whether we are willing to.</p>
+    <p>Veracruz has a rare gift: extraordinary biodiversity within an urban setting. Protecting it doesn't require leaving the city. It requires changing how we live inside it — how we dispose of waste, how we treat the animals we encounter, how we build, how we fish, and how we teach the next generation to see the world around them.</p>
+    <p><strong>Every action — or inaction — is a choice.</strong></p>
+    <div class="actions-grid">
+      <div class="action-card">
+        <div class="action-icon">🚤</div>
+        <h4>Slow down on the water</h4>
+        <p>Reduce boat speed in lagoon zones. Propeller strikes are the leading cause of manatee injuries in our region.</p>
+      </div>
+      <div class="action-card">
+        <div class="action-icon">🏖️</div>
+        <h4>Respect the beach at night</h4>
+        <p>Dim lights near nesting beaches. Keep dogs leashed. Never drive on sand during turtle nesting season.</p>
+      </div>
+      <div class="action-card">
+        <div class="action-icon">🌿</div>
+        <h4>Protect the tlacuache</h4>
+        <p>Do not harm them — let them be. Keep pets inside at night. Slow down in green zones. Spread the word: tlacuaches are harmless and helpful.</p>
+      </div>
+      <div class="action-card">
+        <div class="action-icon">🪸</div>
+        <h4>Don't touch the reef</h4>
+        <p>Never step on or collect coral pieces or shells. Report illegal extraction or pollution to PROFEPA: 800-PROFEPA (800-776-3372).</p>
+      </div>
+      <div class="action-card">
+        <div class="action-icon">🦀</div>
+        <h4>Protect the mangroves</h4>
+        <p>Mangroves are the blue crab's home. Oppose their destruction. Dispose of plastics and chemicals properly — they reach these ecosystems.</p>
+      </div>
+      <div class="action-card">
+        <div class="action-icon">📢</div>
+        <h4>Raise your voice</h4>
+        <p>Support conservation organizations, demand environmental reviews for coastal projects, and share what you've learned today.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SOURCES -->
+<section class="sources" id="sources">
+  <div class="sources-inner">
+    <h2>Sources & References</h2>
+    <p class="sources-intro">Information on this page was compiled from student research carried out by Project Sandbox students and from the following scientific, governmental, and conservation sources.</p>
+    <div class="sources-grid">
+      <div class="source-group">
+        <h3>🌊 West Indian Manatee</h3>
+        <ul>
+          <li>IUCN Red List — <em>Trichechus manatus</em> (2022). <a href="https://www.iucnredlist.org/species/22103/9356917" target="_blank">iucnredlist.org</a></li>
+          <li>SEMARNAT — NOM-059-SEMARNAT-2010. <a href="https://www.gob.mx/semarnat" target="_blank">gob.mx/semarnat</a></li>
+          <li>CONABIO — Ficha de especie: Manatí del Caribe. <a href="https://www.biodiversidad.gob.mx" target="_blank">biodiversidad.gob.mx</a></li>
+        </ul>
+      </div>
+      <div class="source-group">
+        <h3>🪸 Elkhorn Coral</h3>
+        <ul>
+          <li>CONANP — Parque Nacional Sistema Arrecifal Veracruzano. <a href="https://www.gob.mx/conanp" target="_blank">gob.mx/conanp</a></li>
+          <li>IUCN Red List — <em>Acropora palmata</em> (2008). <a href="https://www.iucnredlist.org/species/133381/4100723" target="_blank">iucnredlist.org</a></li>
+          <li>NOAA Coral Reef Conservation Program. <a href="https://coralreef.noaa.gov" target="_blank">coralreef.noaa.gov</a></li>
+          <li>NOM-059-SEMARNAT-2010 — Especies bajo protección especial. <a href="https://www.dof.gob.mx" target="_blank">dof.gob.mx</a></li>
+          <li>Student research: Andrew Bell — Project Sandbox (2025).</li>
+        </ul>
+      </div>
+      <div class="source-group">
+        <h3>🐾 Virginia Opossum / Tlacuache</h3>
+        <ul>
+          <li>Student research: Project Sandbox (2025).</li>
+          <li>CONABIO — Ficha de especie: <em>Didelphis virginiana</em>. <a href="https://www.biodiversidad.gob.mx" target="_blank">biodiversidad.gob.mx</a></li>
+          <li>National Wildlife Federation — Virginia Opossum fact sheet. <a href="https://www.nwf.org/Educational-Resources/Wildlife-Guide/Mammals/Virginia-Opossum" target="_blank">nwf.org</a></li>
+          <li>PROFEPA — Denuncia: <a href="mailto:denuncias@profepa.gob.mx">denuncias@profepa.gob.mx</a> · Tel. 800-776-3372</li>
+        </ul>
+      </div>
+      <div class="source-group">
+        <h3>🐢 Kemp's Ridley Sea Turtle</h3>
+        <ul>
+          <li>IUCN Red List — <em>Lepidochelys kempii</em> (2019). <a href="https://www.iucnredlist.org/species/11533/155057916" target="_blank">iucnredlist.org</a></li>
+          <li>Sea Turtle Conservancy — Kemp's Ridley profile. <a href="https://conserveturtles.org/information-sea-turtles-kemps-ridley-sea-turtle/" target="_blank">conserveturtles.org</a></li>
+          <li>CONANP — Programa de Acción para la Conservación de Tortugas Marinas. <a href="https://www.gob.mx/conanp" target="_blank">gob.mx/conanp</a></li>
+        </ul>
+      </div>
+      <div class="source-group">
+        <h3>🦀 Blue Land Crab</h3>
+        <ul>
+          <li>FAO — <em>Cardisoma guanhumi</em> species profile. <a href="https://www.fao.org/fishery/en/species/2609" target="_blank">fao.org</a></li>
+          <li>CONABIO — Biodiversidad de México: crustáceos costeros. <a href="https://www.biodiversidad.gob.mx" target="_blank">biodiversidad.gob.mx</a></li>
+          <li>Burggren, W.W. & McMahon, B.R. (1988). <em>Biology of the Land Crabs</em>. Cambridge University Press.</li>
+        </ul>
+      </div>
+      <div class="source-group">
+        <h3>📋 General & Legal Framework</h3>
+        <ul>
+          <li>NOM-059-SEMARNAT-2010 — Protección ambiental, especies nativas de México en riesgo. <a href="https://www.dof.gob.mx" target="_blank">dof.gob.mx</a></li>
+          <li>PROFEPA — Procuraduría Federal de Protección al Ambiente. <a href="https://www.gob.mx/profepa" target="_blank">gob.mx/profepa</a></li>
+          <li>CONANP — Áreas Naturales Protegidas de México. <a href="https://www.gob.mx/conanp" target="_blank">gob.mx/conanp</a></li>
+          <li>IUCN — Red List categories and criteria (v3.1). <a href="https://www.iucnredlist.org" target="_blank">iucnredlist.org</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p><strong>Wild Veracruz</strong> — A Wildlife Awareness Campaign</p>
+  <p>Created by students of <strong>Project Sandbox</strong> · Zona Conurbada Veracruz–Boca del Río · 2025</p>
+  <p style="margin-top: 0.5rem; opacity: 0.4;">These animals were here before the city. With care, they can remain long after us.</p>
+</footer>
+
+</body>
+</html>
